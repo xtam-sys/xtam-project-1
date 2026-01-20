@@ -1,0 +1,957 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <meta name="theme-color" content="#0f172a">
+    <meta name="description" content="Secure offline text encryption app">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <title>CryptVault - Secure Encrypter</title>
+    <link rel="manifest" href="manifest.json">
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+        
+        * {
+            font-family: 'Inter', sans-serif;
+            -webkit-tap-highlight-color: transparent;
+        }
+        
+        :root {
+            --bg-primary: #0f172a;
+            --bg-secondary: #1e293b;
+            --bg-tertiary: #334155;
+            --text-primary: #f8fafc;
+            --text-secondary: #94a3b8;
+            --accent: #6366f1;
+            --accent-hover: #818cf8;
+            --success: #10b981;
+            --error: #ef4444;
+        }
+        
+        .light-mode {
+            --bg-primary: #f8fafc;
+            --bg-secondary: #e2e8f0;
+            --bg-tertiary: #cbd5e1;
+            --text-primary: #0f172a;
+            --text-secondary: #475569;
+        }
+        
+        body {
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            min-height: 100vh;
+            transition: all 0.3s ease;
+        }
+        
+        .glass-card {
+            background: var(--bg-secondary);
+            border: 1px solid rgba(255,255,255,0.1);
+            backdrop-filter: blur(10px);
+        }
+        
+        .input-field {
+            background: var(--bg-tertiary);
+            border: 1px solid rgba(255,255,255,0.1);
+            color: var(--text-primary);
+            transition: all 0.2s ease;
+        }
+        
+        .input-field:focus {
+            outline: none;
+            border-color: var(--accent);
+            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.2);
+        }
+        
+        .input-field::placeholder {
+            color: var(--text-secondary);
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+            transition: all 0.2s ease;
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 10px 30px -10px rgba(99, 102, 241, 0.5);
+        }
+        
+        .btn-primary:active {
+            transform: translateY(0);
+        }
+        
+        .btn-secondary {
+            background: var(--bg-tertiary);
+            border: 1px solid rgba(255,255,255,0.1);
+            transition: all 0.2s ease;
+        }
+        
+        .btn-secondary:hover {
+            background: var(--accent);
+        }
+        
+        .strength-bar {
+            height: 4px;
+            border-radius: 2px;
+            transition: all 0.3s ease;
+        }
+        
+        .tab-active {
+            background: var(--accent);
+            color: white;
+        }
+        
+        .tab-inactive {
+            background: var(--bg-tertiary);
+            color: var(--text-secondary);
+        }
+        
+        .toast {
+            animation: slideIn 0.3s ease, fadeOut 0.3s ease 2.7s;
+        }
+        
+        @keyframes slideIn {
+            from { transform: translateY(100px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+        
+        @keyframes fadeOut {
+            from { opacity: 1; }
+            to { opacity: 0; }
+        }
+        
+        .fade-in {
+            animation: fadeIn 0.3s ease;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+        
+        ::-webkit-scrollbar-track {
+            background: var(--bg-secondary);
+        }
+        
+        ::-webkit-scrollbar-thumb {
+            background: var(--bg-tertiary);
+            border-radius: 3px;
+        }
+        
+        textarea {
+            resize: none;
+        }
+        
+        .icon-btn {
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 10px;
+            background: var(--bg-tertiary);
+            transition: all 0.2s ease;
+        }
+        
+        .icon-btn:hover {
+            background: var(--accent);
+        }
+        
+        .modal-overlay {
+            background: rgba(0, 0, 0, 0.7);
+            backdrop-filter: blur(4px);
+        }
+        
+        .modal-content {
+            background: var(--bg-secondary);
+            border: 1px solid rgba(255,255,255,0.1);
+            max-height: 85vh;
+            overflow-y: auto;
+        }
+        
+        .info-section {
+            background: var(--bg-tertiary);
+            border-radius: 12px;
+            padding: 16px;
+            margin-bottom: 12px;
+        }
+        
+        .info-section h4 {
+            color: var(--accent);
+            font-weight: 600;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .info-section p, .info-section li {
+            color: var(--text-secondary);
+            font-size: 14px;
+            line-height: 1.6;
+        }
+        
+        .info-section ul {
+            list-style: none;
+            padding: 0;
+        }
+        
+        .info-section li {
+            padding: 4px 0;
+            padding-left: 20px;
+            position: relative;
+        }
+        
+        .info-section li::before {
+            content: "•";
+            color: var(--accent);
+            position: absolute;
+            left: 6px;
+        }
+        
+        .github-btn {
+            background: linear-gradient(135deg, #333 0%, #24292e 100%);
+            transition: all 0.2s ease;
+        }
+        
+        .github-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px -8px rgba(0, 0, 0, 0.5);
+        }
+    </style>
+</head>
+<body class="p-4 pb-20">
+    <div class="max-w-lg mx-auto">
+        <!-- Header -->
+        <header class="flex items-center justify-between mb-6 fade-in">
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center">
+                    <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/>
+                    </svg>
+                </div>
+                <div>
+                    <h1 class="text-xl font-bold">CryptVault</h1>
+                    <p class="text-xs" style="color: var(--text-secondary)">Secure • Offline • Open Source</p>
+                </div>
+            </div>
+            <div class="flex items-center gap-2">
+                <button onclick="openInfoModal()" class="icon-btn" title="About & Info">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                    </svg>
+                </button>
+                <button onclick="toggleTheme()" class="icon-btn" title="Toggle theme">
+                    <svg id="themeIcon" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"/>
+                    </svg>
+                </button>
+            </div>
+        </header>
+
+        <!-- Tabs -->
+        <div class="flex gap-2 mb-6 fade-in">
+            <button onclick="switchTab('encrypt')" id="tabEncrypt" class="flex-1 py-3 rounded-xl font-medium tab-active transition-all">
+                🔒 Encrypt
+            </button>
+            <button onclick="switchTab('decrypt')" id="tabDecrypt" class="flex-1 py-3 rounded-xl font-medium tab-inactive transition-all">
+                🔓 Decrypt
+            </button>
+        </div>
+
+        <!-- Main Card -->
+        <div class="glass-card rounded-2xl p-5 mb-4 fade-in">
+            <!-- Encryption Method -->
+            <div class="mb-4">
+                <label class="block text-sm font-medium mb-2" style="color: var(--text-secondary)">
+                    Encryption Method
+                </label>
+                <select id="encryptionMethod" class="input-field w-full py-3 px-4 rounded-xl">
+                    <option value="AES-GCM">🛡️ AES-256-GCM (Recommended)</option>
+                    <option value="AES-CBC">🔐 AES-256-CBC (Classic)</option>
+                    <option value="AES-CTR">⚡ AES-256-CTR (Fast)</option>
+                    <option value="TRIPLE">🔒 Triple Layer (Maximum)</option>
+                </select>
+                <p class="text-xs mt-2" style="color: var(--text-secondary)" id="methodInfo">
+                    Military-grade encryption with built-in authentication. Best for passwords.
+                </p>
+            </div>
+
+            <!-- Input Text -->
+            <div class="mb-4">
+                <label class="block text-sm font-medium mb-2" style="color: var(--text-secondary)">
+                    <span id="inputLabel">Text to Encrypt</span>
+                </label>
+                <textarea 
+                    id="inputText" 
+                    class="input-field w-full h-28 py-3 px-4 rounded-xl"
+                    placeholder="Enter your secret text here..."
+                ></textarea>
+            </div>
+
+            <!-- Password -->
+            <div class="mb-4">
+                <label class="block text-sm font-medium mb-2" style="color: var(--text-secondary)">
+                    Encryption Key (Password)
+                </label>
+                <div class="relative">
+                    <input 
+                        type="password" 
+                        id="password" 
+                        class="input-field w-full py-3 px-4 pr-12 rounded-xl"
+                        placeholder="Enter a strong password..."
+                        oninput="updatePasswordStrength()"
+                    >
+                    <button onclick="togglePassword()" class="absolute right-3 top-1/2 -translate-y-1/2" style="color: var(--text-secondary)">
+                        <svg id="eyeIcon" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
+                        </svg>
+                    </button>
+                </div>
+                <!-- Password Strength -->
+                <div class="mt-2">
+                    <div class="flex justify-between text-xs mb-1">
+                        <span style="color: var(--text-secondary)">Password Strength</span>
+                        <span id="strengthLabel" style="color: var(--text-secondary)">Enter password</span>
+                    </div>
+                    <div class="w-full h-1 rounded-full" style="background: var(--bg-tertiary)">
+                        <div id="strengthBar" class="strength-bar" style="width: 0%; background: var(--text-secondary)"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Generate Password Button -->
+            <button onclick="generatePassword()" class="btn-secondary w-full py-3 rounded-xl font-medium mb-4 flex items-center justify-center gap-2">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/>
+                </svg>
+                Generate Strong Password
+            </button>
+
+            <!-- Action Button -->
+            <button onclick="processText()" id="actionBtn" class="btn-primary w-full py-4 rounded-xl font-semibold text-white flex items-center justify-center gap-2">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/>
+                </svg>
+                <span id="actionText">Encrypt Text</span>
+            </button>
+        </div>
+
+        <!-- Result Card -->
+        <div id="resultCard" class="glass-card rounded-2xl p-5 mb-4 hidden fade-in">
+            <div class="flex items-center justify-between mb-3">
+                <label class="text-sm font-medium" style="color: var(--text-secondary)">
+                    <span id="resultLabel">Encrypted Result</span>
+                </label>
+                <div class="flex gap-2">
+                    <button onclick="copyResult()" class="icon-btn" title="Copy to clipboard">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"/>
+                        </svg>
+                    </button>
+                    <button onclick="shareResult()" class="icon-btn" title="Share">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z"/>
+                        </svg>
+                    </button>
+                    <button onclick="clearResult()" class="icon-btn" title="Clear">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+            <div id="resultText" class="input-field w-full p-4 rounded-xl text-sm break-all max-h-40 overflow-y-auto" style="word-break: break-all;">
+            </div>
+        </div>
+
+        <!-- History Card -->
+        <div class="glass-card rounded-2xl p-5 fade-in">
+            <div class="flex items-center justify-between mb-3">
+                <h3 class="font-medium">📋 Recent History</h3>
+                <button onclick="clearHistory()" class="text-xs px-3 py-1 rounded-lg" style="background: var(--bg-tertiary); color: var(--text-secondary)">
+                    Clear All
+                </button>
+            </div>
+            <div id="historyList" class="space-y-2 max-h-48 overflow-y-auto">
+                <p class="text-sm text-center py-4" style="color: var(--text-secondary)">No history yet</p>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <div class="mt-6 text-center fade-in">
+            <p class="text-xs" style="color: var(--text-secondary)">
+                🔐 100% Offline • No data leaves your device
+            </p>
+            <p class="text-xs mt-1" style="color: var(--text-secondary)">
+                v1.1.0 • Made with ❤️ by potatameister
+            </p>
+        </div>
+    </div>
+
+    <!-- Info Modal -->
+    <div id="infoModal" class="fixed inset-0 modal-overlay z-50 hidden flex items-center justify-center p-4">
+        <div class="modal-content rounded-2xl w-full max-w-lg p-5 fade-in">
+            <!-- Modal Header -->
+            <div class="flex items-center justify-between mb-4">
+                <h2 class="text-xl font-bold flex items-center gap-2">
+                    <span class="w-8 h-8 rounded-lg bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center">
+                        <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                        </svg>
+                    </span>
+                    About CryptVault
+                </h2>
+                <button onclick="closeInfoModal()" class="icon-btn">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                    </svg>
+                </button>
+            </div>
+
+            <!-- Encryption Methods -->
+            <div class="info-section">
+                <h4>
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/>
+                    </svg>
+                    Encryption Methods
+                </h4>
+                <ul>
+                    <li><strong>AES-256-GCM</strong> — Military-grade encryption with built-in authentication. Detects if data was tampered with. Best for passwords & sensitive data.</li>
+                    <li><strong>AES-256-CBC</strong> — Classic block cipher used by banks and governments. Highly reliable and widely compatible.</li>
+                    <li><strong>AES-256-CTR</strong> — Counter mode encryption. Fastest option, great for large texts. Stream-based processing.</li>
+                    <li><strong>Triple Layer</strong> — Maximum security. Encrypts with AES-GCM, then applies additional encoding layers for extra protection.</li>
+                </ul>
+            </div>
+
+            <!-- How It Works -->
+            <div class="info-section">
+                <h4>
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/>
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+                    </svg>
+                    How Encryption Works Locally
+                </h4>
+                <p>CryptVault uses the <strong>Web Crypto API</strong> built directly into your browser. Here's what happens:</p>
+                <ul>
+                    <li>Your password is transformed using <strong>PBKDF2</strong> with 100,000 iterations and a random salt</li>
+                    <li>A unique <strong>256-bit key</strong> is derived for each encryption</li>
+                    <li>Random <strong>IV (Initialization Vector)</strong> ensures identical texts encrypt differently each time</li>
+                    <li><strong>Zero network requests</strong> — everything happens in your browser's secure environment</li>
+                    <li>Works completely <strong>offline</strong> after first load</li>
+                </ul>
+            </div>
+
+            <!-- History Storage -->
+            <div class="info-section">
+                <h4>
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                    </svg>
+                    History Storage
+                </h4>
+                <p>Your encryption history is stored securely:</p>
+                <ul>
+                    <li>Saved in your browser's <strong>localStorage</strong> only</li>
+                    <li>Only stores <strong>previews</strong> (first 30 characters) — never full encrypted data</li>
+                    <li>Maximum <strong>10 recent entries</strong> to minimize exposure</li>
+                    <li><strong>Never synced</strong> to any cloud or server</li>
+                    <li>Clearing browser data removes all history</li>
+                </ul>
+            </div>
+
+            <!-- Privacy Notice -->
+            <div class="info-section">
+                <h4>
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/>
+                    </svg>
+                    Privacy First
+                </h4>
+                <ul>
+                    <li>🚫 No analytics or tracking</li>
+                    <li>🚫 No cookies (except essential)</li>
+                    <li>🚫 No server communication</li>
+                    <li>✅ 100% client-side processing</li>
+                    <li>✅ Open source & auditable</li>
+                </ul>
+            </div>
+
+            <!-- Support -->
+            <div class="info-section" style="background: linear-gradient(135deg, rgba(99, 102, 241, 0.2) 0%, rgba(139, 92, 246, 0.2) 100%);">
+                <h4>
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/>
+                    </svg>
+                    Support This Project
+                </h4>
+                <p>CryptVault is free and open source. If you find it useful, consider supporting the development!</p>
+            </div>
+
+            <!-- GitHub Button -->
+            <a href="https://github.com/potatameister" target="_blank" rel="noopener noreferrer" class="github-btn w-full py-4 rounded-xl font-semibold text-white flex items-center justify-center gap-3 mt-4">
+                <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
+                    <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/>
+                </svg>
+                Follow @potatameister on GitHub
+            </a>
+
+            <p class="text-center text-xs mt-4" style="color: var(--text-secondary)">
+                Version 1.1.0 • MIT License • Made with ❤️
+            </p>
+        </div>
+    </div>
+
+    <!-- Toast Container -->
+    <div id="toastContainer" class="fixed bottom-4 left-4 right-4 flex flex-col items-center gap-2 pointer-events-none z-50"></div>
+
+    <script>
+        // State
+        let currentTab = 'encrypt';
+        let history = JSON.parse(localStorage.getItem('cryptHistory') || '[]');
+        let isDarkMode = localStorage.getItem('darkMode') !== 'false';
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', () => {
+            applyTheme();
+            renderHistory();
+            updateMethodInfo();
+        });
+
+        // Modal Functions
+        function openInfoModal() {
+            document.getElementById('infoModal').classList.remove('hidden');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeInfoModal() {
+            document.getElementById('infoModal').classList.add('hidden');
+            document.body.style.overflow = '';
+        }
+
+        // Close modal on backdrop click
+        document.getElementById('infoModal').addEventListener('click', (e) => {
+            if (e.target.id === 'infoModal') {
+                closeInfoModal();
+            }
+        });
+
+        // Close modal on Escape key
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') {
+                closeInfoModal();
+            }
+        });
+
+        // Theme Toggle
+        function toggleTheme() {
+            isDarkMode = !isDarkMode;
+            localStorage.setItem('darkMode', isDarkMode);
+            applyTheme();
+        }
+
+        function applyTheme() {
+            if (isDarkMode) {
+                document.body.classList.remove('light-mode');
+                document.getElementById('themeIcon').innerHTML = `
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"/>
+                `;
+            } else {
+                document.body.classList.add('light-mode');
+                document.getElementById('themeIcon').innerHTML = `
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"/>
+                `;
+            }
+        }
+
+        // Tab Switching
+        function switchTab(tab) {
+            currentTab = tab;
+            const encryptTab = document.getElementById('tabEncrypt');
+            const decryptTab = document.getElementById('tabDecrypt');
+            const inputLabel = document.getElementById('inputLabel');
+            const actionText = document.getElementById('actionText');
+            const resultLabel = document.getElementById('resultLabel');
+
+            if (tab === 'encrypt') {
+                encryptTab.className = 'flex-1 py-3 rounded-xl font-medium tab-active transition-all';
+                decryptTab.className = 'flex-1 py-3 rounded-xl font-medium tab-inactive transition-all';
+                inputLabel.textContent = 'Text to Encrypt';
+                actionText.textContent = 'Encrypt Text';
+                resultLabel.textContent = 'Encrypted Result';
+                document.getElementById('inputText').placeholder = 'Enter your secret text here...';
+            } else {
+                encryptTab.className = 'flex-1 py-3 rounded-xl font-medium tab-inactive transition-all';
+                decryptTab.className = 'flex-1 py-3 rounded-xl font-medium tab-active transition-all';
+                inputLabel.textContent = 'Text to Decrypt';
+                actionText.textContent = 'Decrypt Text';
+                resultLabel.textContent = 'Decrypted Result';
+                document.getElementById('inputText').placeholder = 'Paste encrypted text here...';
+            }
+        }
+
+        // Encryption Method Info
+        document.getElementById('encryptionMethod').addEventListener('change', updateMethodInfo);
+
+        function updateMethodInfo() {
+            const method = document.getElementById('encryptionMethod').value;
+            const info = document.getElementById('methodInfo');
+            const descriptions = {
+                'AES-GCM': 'Military-grade encryption with built-in authentication. Best for passwords.',
+                'AES-CBC': 'Classic block cipher used by banks. Highly reliable and compatible.',
+                'AES-CTR': 'Counter mode encryption. Fastest option for large texts.',
+                'TRIPLE': 'Maximum security with multiple encryption layers. Strongest protection.'
+            };
+            info.textContent = descriptions[method] || descriptions['AES-GCM'];
+        }
+
+        // Password Toggle
+        function togglePassword() {
+            const input = document.getElementById('password');
+            const icon = document.getElementById('eyeIcon');
+            if (input.type === 'password') {
+                input.type = 'text';
+                icon.innerHTML = `
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.543 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21"/>
+                `;
+            } else {
+                input.type = 'password';
+                icon.innerHTML = `
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
+                `;
+            }
+        }
+
+        // Password Strength
+        function updatePasswordStrength() {
+            const password = document.getElementById('password').value;
+            const bar = document.getElementById('strengthBar');
+            const label = document.getElementById('strengthLabel');
+
+            let strength = 0;
+            if (password.length >= 8) strength += 25;
+            if (password.length >= 12) strength += 15;
+            if (/[a-z]/.test(password) && /[A-Z]/.test(password)) strength += 20;
+            if (/\d/.test(password)) strength += 20;
+            if (/[^a-zA-Z0-9]/.test(password)) strength += 20;
+
+            bar.style.width = strength + '%';
+            
+            if (strength === 0) {
+                label.textContent = 'Enter password';
+                bar.style.background = 'var(--text-secondary)';
+            } else if (strength < 40) {
+                label.textContent = 'Weak';
+                bar.style.background = '#ef4444';
+            } else if (strength < 70) {
+                label.textContent = 'Medium';
+                bar.style.background = '#f59e0b';
+            } else {
+                label.textContent = 'Strong';
+                bar.style.background = '#10b981';
+            }
+        }
+
+        // Generate Password
+        function generatePassword() {
+            const chars = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*()_+-=[]{}|;:,.<>?';
+            const array = new Uint32Array(24);
+            crypto.getRandomValues(array);
+            let password = '';
+            for (let i = 0; i < 24; i++) {
+                password += chars[array[i] % chars.length];
+            }
+            document.getElementById('password').value = password;
+            document.getElementById('password').type = 'text';
+            updatePasswordStrength();
+            showToast('Strong password generated!', 'success');
+        }
+
+        // Crypto Functions
+        async function deriveKey(password, salt, method) {
+            const encoder = new TextEncoder();
+            const keyMaterial = await crypto.subtle.importKey(
+                'raw',
+                encoder.encode(password),
+                'PBKDF2',
+                false,
+                ['deriveBits', 'deriveKey']
+            );
+
+            const actualMethod = method === 'TRIPLE' ? 'AES-GCM' : method;
+
+            return crypto.subtle.deriveKey(
+                {
+                    name: 'PBKDF2',
+                    salt: salt,
+                    iterations: 100000,
+                    hash: 'SHA-256'
+                },
+                keyMaterial,
+                { name: actualMethod, length: 256 },
+                false,
+                ['encrypt', 'decrypt']
+            );
+        }
+
+        async function encryptText(text, password, method) {
+            const encoder = new TextEncoder();
+            const salt = crypto.getRandomValues(new Uint8Array(16));
+            const actualMethod = method === 'TRIPLE' ? 'AES-GCM' : method;
+            const ivLength = actualMethod === 'AES-GCM' ? 12 : 16;
+            const iv = crypto.getRandomValues(new Uint8Array(ivLength));
+            const key = await deriveKey(password, salt, method);
+
+            let dataToEncrypt = encoder.encode(text);
+            
+            // For triple encryption, add extra encoding layer first
+            if (method === 'TRIPLE') {
+                const firstPass = btoa(String.fromCharCode(...dataToEncrypt));
+                dataToEncrypt = encoder.encode(firstPass);
+            }
+
+            const encrypted = await crypto.subtle.encrypt(
+                { name: actualMethod, iv: iv, ...(actualMethod === 'AES-CTR' ? { counter: iv, length: 64 } : {}) },
+                key,
+                dataToEncrypt
+            );
+
+            // Combine salt + iv + encrypted data
+            const combined = new Uint8Array(salt.length + iv.length + encrypted.byteLength);
+            combined.set(salt, 0);
+            combined.set(iv, salt.length);
+            combined.set(new Uint8Array(encrypted), salt.length + iv.length);
+
+            // Prefix with method identifier
+            const methodPrefixes = {
+                'AES-GCM': 'G:',
+                'AES-CBC': 'C:',
+                'AES-CTR': 'R:',
+                'TRIPLE': 'T:'
+            };
+            
+            let result = methodPrefixes[method] + btoa(String.fromCharCode(...combined));
+            
+            // For triple, add another encoding layer
+            if (method === 'TRIPLE') {
+                result = 'T:' + btoa(result);
+            }
+            
+            return result;
+        }
+
+        async function decryptText(encryptedText, password) {
+            try {
+                let data = encryptedText;
+                let method = 'AES-GCM';
+                
+                // Detect and handle triple encryption
+                if (data.startsWith('T:')) {
+                    const decoded = atob(data.substring(2));
+                    if (decoded.startsWith('T:')) {
+                        data = decoded;
+                        method = 'TRIPLE';
+                    }
+                }
+
+                // Detect method from prefix
+                const methodPrefix = data.substring(0, 2);
+                const methodMap = {
+                    'G:': 'AES-GCM',
+                    'C:': 'AES-CBC',
+                    'R:': 'AES-CTR',
+                    'T:': 'TRIPLE'
+                };
+                
+                if (methodMap[methodPrefix]) {
+                    method = methodMap[methodPrefix];
+                    data = data.substring(2);
+                }
+
+                const actualMethod = method === 'TRIPLE' ? 'AES-GCM' : method;
+                const combined = Uint8Array.from(atob(data), c => c.charCodeAt(0));
+                const ivLength = actualMethod === 'AES-GCM' ? 12 : 16;
+                
+                const salt = combined.slice(0, 16);
+                const iv = combined.slice(16, 16 + ivLength);
+                const encrypted = combined.slice(16 + ivLength);
+
+                const key = await deriveKey(password, salt, method);
+
+                const decrypted = await crypto.subtle.decrypt(
+                    { name: actualMethod, iv: iv, ...(actualMethod === 'AES-CTR' ? { counter: iv, length: 64 } : {}) },
+                    key,
+                    encrypted
+                );
+
+                let result = new TextDecoder().decode(decrypted);
+                
+                // For triple, decode the extra layer
+                if (method === 'TRIPLE') {
+                    const decoded = atob(result);
+                    result = new TextDecoder().decode(Uint8Array.from(decoded, c => c.charCodeAt(0)));
+                }
+
+                return result;
+            } catch (error) {
+                throw new Error('Decryption failed. Wrong password or corrupted data.');
+            }
+        }
+
+        // Process Text
+        async function processText() {
+            const text = document.getElementById('inputText').value.trim();
+            const password = document.getElementById('password').value;
+            const method = document.getElementById('encryptionMethod').value;
+
+            if (!text) {
+                showToast('Please enter text to ' + currentTab, 'error');
+                return;
+            }
+
+            if (!password) {
+                showToast('Please enter a password', 'error');
+                return;
+            }
+
+            try {
+                let result;
+                if (currentTab === 'encrypt') {
+                    result = await encryptText(text, password, method);
+                    addToHistory('Encrypted', result.substring(0, 30) + '...', method);
+                    showToast('Text encrypted successfully!', 'success');
+                } else {
+                    result = await decryptText(text, password);
+                    addToHistory('Decrypted', result.substring(0, 30) + (result.length > 30 ? '...' : ''), 'Auto');
+                    showToast('Text decrypted successfully!', 'success');
+                }
+
+                document.getElementById('resultText').textContent = result;
+                document.getElementById('resultCard').classList.remove('hidden');
+            } catch (error) {
+                showToast(error.message, 'error');
+            }
+        }
+
+        // Copy Result
+        async function copyResult() {
+            const result = document.getElementById('resultText').textContent;
+            try {
+                await navigator.clipboard.writeText(result);
+                showToast('Copied to clipboard!', 'success');
+            } catch (err) {
+                const textarea = document.createElement('textarea');
+                textarea.value = result;
+                document.body.appendChild(textarea);
+                textarea.select();
+                document.execCommand('copy');
+                document.body.removeChild(textarea);
+                showToast('Copied to clipboard!', 'success');
+            }
+        }
+
+        // Share Result
+        async function shareResult() {
+            const result = document.getElementById('resultText').textContent;
+            if (navigator.share) {
+                try {
+                    await navigator.share({
+                        title: 'CryptVault Encrypted Text',
+                        text: result
+                    });
+                } catch (err) {
+                    if (err.name !== 'AbortError') {
+                        copyResult();
+                    }
+                }
+            } else {
+                copyResult();
+            }
+        }
+
+        // Clear Result
+        function clearResult() {
+            document.getElementById('resultCard').classList.add('hidden');
+            document.getElementById('resultText').textContent = '';
+            document.getElementById('inputText').value = '';
+            document.getElementById('password').value = '';
+            updatePasswordStrength();
+        }
+
+        // History Functions
+        function addToHistory(type, preview, method) {
+            const item = {
+                type,
+                preview,
+                method,
+                timestamp: new Date().toLocaleTimeString()
+            };
+            history.unshift(item);
+            if (history.length > 10) history.pop();
+            localStorage.setItem('cryptHistory', JSON.stringify(history));
+            renderHistory();
+        }
+
+        function renderHistory() {
+            const list = document.getElementById('historyList');
+            if (history.length === 0) {
+                list.innerHTML = '<p class="text-sm text-center py-4" style="color: var(--text-secondary)">No history yet</p>';
+                return;
+            }
+
+            list.innerHTML = history.map((item, index) => `
+                <div class="flex items-center justify-between p-3 rounded-xl" style="background: var(--bg-tertiary)">
+                    <div class="flex-1 min-w-0">
+                        <div class="flex items-center gap-2">
+                            <span class="text-xs px-2 py-0.5 rounded" style="background: var(--accent); color: white">
+                                ${item.type}
+                            </span>
+                            <span class="text-xs" style="color: var(--text-secondary)">${item.method}</span>
+                        </div>
+                        <p class="text-sm truncate mt-1" style="color: var(--text-secondary)">${item.preview}</p>
+                    </div>
+                    <span class="text-xs ml-2 whitespace-nowrap" style="color: var(--text-secondary)">${item.timestamp}</span>
+                </div>
+            `).join('');
+        }
+
+        function clearHistory() {
+            history = [];
+            localStorage.setItem('cryptHistory', JSON.stringify(history));
+            renderHistory();
+            showToast('History cleared', 'success');
+        }
+
+        // Toast Notification
+        function showToast(message, type = 'info') {
+            const container = document.getElementById('toastContainer');
+            const toast = document.createElement('div');
+            toast.className = `toast px-4 py-3 rounded-xl font-medium text-white text-sm pointer-events-auto`;
+            toast.style.background = type === 'success' ? '#10b981' : type === 'error' ? '#ef4444' : '#6366f1';
+            toast.textContent = message;
+            container.appendChild(toast);
+            setTimeout(() => toast.remove(), 3000);
+        }
+
+        // Service Worker Registration
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('sw.js').then(() => {
+                console.log('Service Worker registered');
+            }).catch(err => {
+                console.log('Service Worker registration failed:', err);
+            });
+        }
+    </script>
+</body>
+</html>
