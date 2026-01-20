@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CryptVault Icon Generator</title>
+    <style>
+        * { font-family: system-ui, sans-serif; box-sizing: border-box; }
+        body { background: #0f172a; color: #f8fafc; min-height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 20px; margin: 0; }
+        h1 { margin-bottom: 8px; }
+        p { color: #94a3b8; margin-bottom: 30px; }
+        .icons { display: flex; gap: 30px; flex-wrap: wrap; justify-content: center; margin-bottom: 30px; }
+        .icon-box { display: flex; flex-direction: column; align-items: center; gap: 10px; }
+        canvas { border-radius: 20px; box-shadow: 0 10px 40px rgba(99,102,241,0.3); }
+        button { background: linear-gradient(135deg, #6366f1, #8b5cf6); color: white; border: none; padding: 14px 28px; border-radius: 12px; font-size: 15px; font-weight: 600; cursor: pointer; }
+        button:hover { transform: translateY(-2px); }
+        .download-all { padding: 18px 48px; font-size: 17px; margin-top: 20px; }
+    </style>
+</head>
+<body>
+    <h1>🔐 CryptVault Icons</h1>
+    <p>Download both icons for your app</p>
+    
+    <div class="icons">
+        <div class="icon-box">
+            <canvas id="c512" width="512" height="512"></canvas>
+            <span>512×512</span>
+            <button onclick="dl(512)">Download</button>
+        </div>
+        <div class="icon-box">
+            <canvas id="c192" width="192" height="192"></canvas>
+            <span>192×192</span>
+            <button onclick="dl(192)">Download</button>
+        </div>
+    </div>
+    
+    <button class="download-all" onclick="dl(512);setTimeout(()=>dl(192),500)">⬇️ Download Both Icons</button>
+
+    <script>
+        function draw(canvas, size) {
+            const ctx = canvas.getContext('2d');
+            
+            // Gradient background
+            const grad = ctx.createLinearGradient(0, 0, size, size);
+            grad.addColorStop(0, '#6366f1');
+            grad.addColorStop(1, '#9333ea');
+            
+            // Rounded rectangle
+            const r = size * 0.22;
+            ctx.beginPath();
+            ctx.moveTo(r, 0);
+            ctx.lineTo(size - r, 0);
+            ctx.quadraticCurveTo(size, 0, size, r);
+            ctx.lineTo(size, size - r);
+            ctx.quadraticCurveTo(size, size, size - r, size);
+            ctx.lineTo(r, size);
+            ctx.quadraticCurveTo(0, size, 0, size - r);
+            ctx.lineTo(0, r);
+            ctx.quadraticCurveTo(0, 0, r, 0);
+            ctx.closePath();
+            ctx.fillStyle = grad;
+            ctx.fill();
+            
+            // Lock icon - centered, small (40% of canvas)
+            const iconSize = size * 0.4;
+            const offsetX = (size - iconSize) / 2;
+            const offsetY = (size - iconSize) / 2;
+            const scale = iconSize / 24; // Original viewBox is 24x24
+            
+            ctx.save();
+            ctx.translate(offsetX, offsetY);
+            ctx.scale(scale, scale);
+            
+            ctx.strokeStyle = 'white';
+            ctx.lineWidth = 2;
+            ctx.lineCap = 'round';
+            ctx.lineJoin = 'round';
+            ctx.fillStyle = 'none';
+            
+            // Lock body (rounded rect from x=3, y=11, w=18, h=11, rx=2)
+            const bx = 3, by = 11, bw = 18, bh = 11, br = 2;
+            ctx.beginPath();
+            ctx.moveTo(bx + br, by);
+            ctx.lineTo(bx + bw - br, by);
+            ctx.quadraticCurveTo(bx + bw, by, bx + bw, by + br);
+            ctx.lineTo(bx + bw, by + bh - br);
+            ctx.quadraticCurveTo(bx + bw, by + bh, bx + bw - br, by + bh);
+            ctx.lineTo(bx + br, by + bh);
+            ctx.quadraticCurveTo(bx, by + bh, bx, by + bh - br);
+            ctx.lineTo(bx, by + br);
+            ctx.quadraticCurveTo(bx, by, bx + br, by);
+            ctx.closePath();
+            ctx.stroke();
+            
+            // Shackle (the U part: M7 11V7a5 5 0 0 1 10 0v4)
+            ctx.beginPath();
+            ctx.moveTo(7, 11);
+            ctx.lineTo(7, 7);
+            ctx.bezierCurveTo(7, 4.2, 9.2, 2, 12, 2);
+            ctx.bezierCurveTo(14.8, 2, 17, 4.2, 17, 7);
+            ctx.lineTo(17, 11);
+            ctx.stroke();
+            
+            ctx.restore();
+        }
+        
+        draw(document.getElementById('c512'), 512);
+        draw(document.getElementById('c192'), 192);
+        
+        function dl(size) {
+            const a = document.createElement('a');
+            a.download = 'icon-' + size + '.png';
+            a.href = document.getElementById('c' + size).toDataURL('image/png');
+            a.click();
+        }
+    </script>
+</body>
+</html>

@@ -1,13 +1,14 @@
 {
     "name": "CryptVault",
     "short_name": "CryptVault",
-    "description": "Secure offline text encryption app",
-    "start_url": ".",
-    "scope": ".",
+    "description": "Secure offline text encryption",
+    "start_url": "./index.html",
+    "scope": "./",
     "display": "standalone",
-    "background_color": "#0f172a",
-    "theme_color": "#6366f1",
+    "display_override": ["standalone", "minimal-ui"],
     "orientation": "portrait",
+    "background_color": "#0f172a",
+    "theme_color": "#0f172a",
     "icons": [
         {
             "src": "icon-192.png",
