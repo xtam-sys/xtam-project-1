@@ -1,8 +1,10 @@
-const CACHE_NAME = 'cryptvault-v1.1.0';
+const CACHE_NAME = 'cryptvault-v1.2.0';
 const urlsToCache = [
     '/',
     '/index.html',
-    '/manifest.json'
+    '/manifest.json',
+    '/icon-192.png',
+    '/icon-512.png'
 ];
 
 // Install event
