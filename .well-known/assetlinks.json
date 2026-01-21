@@ -1,8 +1,0 @@
-[{
-      "relation": ["delegate_permission/common.handle_all_urls"],
-      "target": {
-        "namespace": "android_app",
-        "package_name": "com.potatameister.cryptvault",
-        "sha256_cert_fingerprints": ["44:74:CC:41:03:4B:8D:E4:DF:CA:AF:E2:8C:8A:79:40:8A:15:11:0C:DF:21:C4:49:FB:A3:57:6F:C5:37:97:52"]
-      }
-    }]
