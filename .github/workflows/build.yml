@@ -60,17 +60,58 @@ jobs:
         }
         EOF
     
+    - name: Fix Status Bar
+      run: |
+        # Make status bar translucent
+        sed -i 's/<style name="AppTheme.NoActionBar" parent="Theme.AppCompat.DayNight.NoActionBar">/<style name="AppTheme.NoActionBar" parent="Theme.AppCompat.DayNight.NoActionBar">\n        <item name="android:windowTranslucentStatus">false<\/item>\n        <item name="android:statusBarColor">@color\/colorPrimaryDark<\/item>/' android/app/src/main/res/values/styles.xml || true
+    
+    - name: Copy App Icons
+      run: |
+        # Copy icons to Android resources if they exist
+        if [ -f "icon-192.png" ]; then
+          cp icon-192.png android/app/src/main/res/mipmap-xxxhdpi/ic_launcher.png || true
+          cp icon-192.png android/app/src/main/res/mipmap-xxhdpi/ic_launcher.png || true
+          cp icon-192.png android/app/src/main/res/mipmap-xhdpi/ic_launcher.png || true
+          cp icon-192.png android/app/src/main/res/mipmap-hdpi/ic_launcher.png || true
+          cp icon-192.png android/app/src/main/res/mipmap-mdpi/ic_launcher.png || true
+          cp icon-192.png android/app/src/main/res/mipmap-xxxhdpi/ic_launcher_round.png || true
+          cp icon-192.png android/app/src/main/res/mipmap-xxhdpi/ic_launcher_round.png || true
+          cp icon-192.png android/app/src/main/res/mipmap-xhdpi/ic_launcher_round.png || true
+          cp icon-192.png android/app/src/main/res/mipmap-hdpi/ic_launcher_round.png || true
+          cp icon-192.png android/app/src/main/res/mipmap-mdpi/ic_launcher_round.png || true
+          cp icon-192.png android/app/src/main/res/mipmap-xxxhdpi/ic_launcher_foreground.png || true
+          cp icon-192.png android/app/src/main/res/mipmap-xxhdpi/ic_launcher_foreground.png || true
+          cp icon-192.png android/app/src/main/res/mipmap-xhdpi/ic_launcher_foreground.png || true
+          cp icon-192.png android/app/src/main/res/mipmap-hdpi/ic_launcher_foreground.png || true
+          cp icon-192.png android/app/src/main/res/mipmap-mdpi/ic_launcher_foreground.png || true
+        fi
+    
     - name: Sync
       run: npx cap sync
     
-    - name: Build APK
+    - name: Build Debug APK
       run: |
         cd android
         chmod +x gradlew
         ./gradlew assembleDebug --no-daemon
     
-    - name: Upload APK
+    - name: Build Release APK
+      run: |
+        cd android
+        ./gradlew assembleRelease --no-daemon
+      continue-on-error: true
+    
+    - name: Upload Debug APK
       uses: actions/upload-artifact@v4
       with:
-        name: CryptVault-APK
+        name: CryptVault-Debug
         path: android/app/build/outputs/apk/debug/app-debug.apk
+        retention-days: 90
+    
+    - name: Upload Release APK
+      uses: actions/upload-artifact@v4
+      with:
+        name: CryptVault-Release
+        path: android/app/build/outputs/apk/release/app-release-unsigned.apk
+        retention-days: 90
+      continue-on-error: true
