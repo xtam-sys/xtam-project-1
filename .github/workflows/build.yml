@@ -27,65 +27,34 @@ jobs:
     - name: Setup Android SDK
       uses: android-actions/setup-android@v3
     
-    - name: Create package.json
-      run: |
-        cat > package.json << 'EOF'
-        {
-          "name": "cryptvault",
-          "version": "1.0.0",
-          "private": true
-        }
-        EOF
-    
     - name: Install Capacitor
       run: |
-        npm install @capacitor/core@latest @capacitor/cli@latest @capacitor/android@latest
+        npm init -y
+        npm install @capacitor/core @capacitor/cli @capacitor/android
     
-    - name: Create Capacitor config
-      run: |
-        cat > capacitor.config.json << 'EOF'
-        {
-          "appId": "com.potatameister.cryptvault",
-          "appName": "CryptVault",
-          "webDir": "www",
-          "server": {
-            "androidScheme": "https"
-          },
-          "android": {
-            "allowMixedContent": false
-          }
-        }
-        EOF
-    
-    - name: Create www folder and copy files
+    - name: Setup www folder
       run: |
         mkdir -p www
         cp index.html www/
         cp sw.js www/
         cp manifest.json www/
-        cp icon-192.png www/ 2>/dev/null || echo "icon-192 not found"
-        cp icon-512.png www/ 2>/dev/null || echo "icon-512 not found"
+        cp icon-192.png www/ || true
+        cp icon-512.png www/ || true
     
-    - name: Initialize Capacitor
-      run: npx cap init CryptVault com.potatameister.cryptvault --web-dir www || true
+    - name: Initialize and Add Android
+      run: |
+        npx cap init CryptVault com.potatameister.cryptvault --web-dir www
+        npx cap add android
+        npx cap sync
     
-    - name: Add Android platform
-      run: npx cap add android
-    
-    - name: Update Android project
-      run: npx cap sync android
-    
-    - name: Set Gradle permissions
-      run: chmod +x android/gradlew
-    
-    - name: Build Debug APK
+    - name: Build APK
       run: |
         cd android
-        ./gradlew assembleDebug --no-daemon
+        chmod +x gradlew
+        ./gradlew assembleDebug --no-daemon --stacktrace
     
-    - name: Upload Debug APK
+    - name: Upload APK
       uses: actions/upload-artifact@v4
       with:
-        name: CryptVault-Debug-APK
+        name: CryptVault-APK
         path: android/app/build/outputs/apk/debug/app-debug.apk
-        retention-days: 30
