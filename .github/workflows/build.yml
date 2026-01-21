@@ -112,23 +112,9 @@ jobs:
         chmod +x gradlew
         ./gradlew assembleRelease --no-daemon
     
-    - name: Sign APK
-      run: |
-        # Create keystore
-        keytool -genkey -v -keystore release.keystore -alias cryptvault -keyalg RSA -keysize 2048 -validity 10000 -storepass cryptvault123 -keypass cryptvault123 -dname "CN=CryptVault, OU=App, O=Potatameister, L=Unknown, ST=Unknown, C=US"
-        
-        # Sign the APK
-        cd android/app/build/outputs/apk/release
-        
-        # Find the unsigned APK
-        UNSIGNED_APK=$(ls *.apk | head -1)
-        
-        # Use apksigner
-        ${ANDROID_HOME}/build-tools/34.0.0/apksigner sign --ks ../../../../../../release.keystore --ks-key-alias cryptvault --ks-pass pass:cryptvault123 --key-pass pass:cryptvault123 --out CryptVault-signed.apk $UNSIGNED_APK
-    
-    - name: Upload Signed APK
+    - name: Upload Unsigned Release APK
       uses: actions/upload-artifact@v4
       with:
-        name: CryptVault-v1.5.0
-        path: android/app/build/outputs/apk/release/CryptVault-signed.apk
+        name: CryptVault-v1.5.0-unsigned
+        path: android/app/build/outputs/apk/release/app-release-unsigned.apk
         retention-days: 90
