@@ -48,10 +48,6 @@ Secure, offline-first text encryption app. Military-grade encryption that works 
 
 [MIT License](LICENSE) - Free to use, modify, distribute.
 
-## 👨‍💻 Author
-
-Made with ❤️ by [@potatameister](https://github.com/potatameister)
-
 ## 🤝 Support the Development
 
 CryptVault is built to be 100% free, offline, and open-source. There are no ads, no trackers, and no servers.
@@ -72,12 +68,18 @@ Prefer to stay anonymous? I accept crypto donations.
 **Monero (XMR) - The Privacy Choice**
 ```text
 85rGKZsK4W7ENiP2xmTwDPG11W9uswJob4xgcQeby13wUFyRrWAhFzHN6nLSmQi1kV58tzUhswYqR5E1txL2HnCg6fP5gn6
+```
 
-Bitcoin (BTC)
-
+**Bitcoin (BTC)**
+```text
 bc1qpamdenvjmzmjumz24s3hymcn77xu8gy9ur04ll
+```
 
 </details>
+
+## 👨‍💻 Author
+
+Made with ❤️ by [@potatameister](https://github.com/potatameister)
 
 ---
 
