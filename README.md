@@ -52,6 +52,33 @@ Secure, offline-first text encryption app. Military-grade encryption that works 
 
 Made with ❤️ by [@potatameister](https://github.com/potatameister)
 
+## 🤝 Support the Development
+
+CryptVault is built to be 100% free, offline, and open-source. There are no ads, no trackers, and no servers.
+
+If you value privacy tools and want to support my "vibecoding" sessions (or just buy me a coffee), you can support the project here:
+
+[![GitHub Sponsors](https://img.shields.io/badge/Sponsor-%E2%9D%A4-pink?style=for-the-badge&logo=github)](https://github.com/sponsors/potatameister)
+
+### 🕵️ Private Donations (Crypto)
+
+Prefer to stay anonymous? I accept crypto donations.
+
+<details>
+<summary><strong>Click to show Wallet Addresses</strong></summary>
+
+<br>
+
+**Monero (XMR) - The Privacy Choice**
+```text
+85rGKZsK4W7ENiP2xmTwDPG11W9uswJob4xgcQeby13wUFyRrWAhFzHN6nLSmQi1kV58tzUhswYqR5E1txL2HnCg6fP5gn6
+
+Bitcoin (BTC)
+
+bc1qpamdenvjmzmjumz24s3hymcn77xu8gy9ur04ll
+
+</details>
+
 ---
 
 ⭐ Star this repo if you find it useful!
