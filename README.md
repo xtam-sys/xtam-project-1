@@ -1,71 +1,61 @@
-# CryptVault
+# CRYPTVAULT
 
-Secure, offline-first text encryption app. Military-grade encryption that works 100% on your device.
+**Secure. Offline. Zero-Knowledge.**
 
-## Features
+CryptVault is a military-grade text encryption tool designed for absolute privacy. It runs entirely on your device using the Web Crypto API. No servers. No cloud. No tracking.
 
-- 5 Encryption Methods - AES-GCM, AES-CBC, AES-CTR, Triple Layer, Simple
-- 100% Offline - No internet needed
-- Zero Data Collection - Everything stays on device
-- History - Quick access to recent encryptions
-- Dark/Light Mode
-- Password Generator
-
-## Download
-
-### Android
-[![Download APK](https://img.shields.io/badge/Download-APK-green?style=for-the-badge&logo=android)](https://github.com/potatameister/CryptVault/releases/latest)
-
-### Web
-[Open in Browser](https://potatameister.github.io/CryptVault/)
-
-## Screenshots
+---
 
 <p align="center">
-  <img src="screenshots/screenshot1.jpg" width="250" />
-  <img src="screenshots/screenshot2.jpg" width="250" />
+  <a href="https://github.com/potatameister/CryptVault/releases/latest">
+    <img src="https://img.shields.io/badge/ANDROID-DOWNLOAD_APK-000000?style=for-the-badge&logo=android&logoColor=white" alt="Download APK">
+  </a>
+  <a href="https://potatameister.github.io/CryptVault/">
+    <img src="https://img.shields.io/badge/WEB-OPEN_APP-000000?style=for-the-badge&logo=google-chrome&logoColor=white" alt="Web Version">
+  </a>
+  <a href="https://github.com/sponsors/potatameister">
+    <img src="https://img.shields.io/badge/SPONSOR-GITHUB-000000?style=for-the-badge&logo=github&logoColor=white" alt="Sponsor">
+  </a>
 </p>
 
-## Security
+---
 
-- AES-256 encryption
-- PBKDF2 key derivation (250,000 iterations)
-- Random salt & IV for each encryption
-- No data leaves your device
-- Open source - audit it yourself!
+## VISUALS
 
-## Encryption Methods
+<p align="center">
+  <img src="screenshots/screenshot1.jpg" width="300" style="border-radius: 12px; margin: 10px;" />
+  <img src="screenshots/screenshot2.jpg" width="300" style="border-radius: 12px; margin: 10px;" />
+</p>
 
-| Method | Description |
-|--------|-------------|
-| AES-GCM | Recommended. Military-grade with authentication |
-| AES-CBC | Classic bank-level encryption |
-| AES-CTR | Fastest for large texts |
-| Triple Layer | Maximum security |
-| Simple | Same input = same output (deterministic) |
+## THE ARCHITECTURE
 
-## License
+CryptVault is built on the principle that privacy is a human right.
 
-[MIT License](LICENSE) - Free to use, modify, distribute.
+*   **Offline First:** The code executes locally in your browser or on your Android device.
+*   **Audit Ready:** Open-source architecture allows for full transparency.
+*   **Standards Compliant:** Utilizes native AES-256-GCM and PBKDF2 key derivation (250,000 iterations).
 
-## Support the Development
+## ENCRYPTION METHODS
 
-CryptVault is built to be 100% free, offline, and open-source. There are no ads, no trackers, and no servers.
+| Protocol | Security Level | Use Case |
+| :--- | :--- | :--- |
+| **AES-GCM** | HIGH (Recommended) | Authenticated encryption. Detects tampering. |
+| **AES-CBC** | HIGH | Standard block cipher chaining. Robust compatibility. |
+| **AES-CTR** | MEDIUM | Counter mode. High speed for large datasets. |
+| **Triple Layer** | MAXIMUM | Base64 encoding wrapped in AES-GCM wrapped in Base64. |
+| **Simple** | LOW | Deterministic. Identical input yields identical output. |
 
-If you value privacy tools and want to support my "vibecoding" sessions (or just buy me a coffee), you can support the project here:
+## SUPPORT THE PROTOCOL
 
-[![GitHub Sponsors](https://img.shields.io/badge/Sponsor-pink?style=for-the-badge&logo=github)](https://github.com/sponsors/potatameister)
+CryptVault is 100% free, open-source, and ad-free. If you value privacy tools, consider supporting the continued development.
 
-### Private Donations (Crypto)
+### GitHub Sponsors
 
-Prefer to stay anonymous? I accept crypto donations.
+[Support via GitHub](https://github.com/sponsors/potatameister)
 
-<details>
-<summary><strong>Click to show Wallet Addresses</strong></summary>
+### Crypto Channels
 
-<br>
-
-**Monero (XMR) - The Privacy Choice**
+**Monero (XMR) - Private**
 ```text
 85rGKZsK4W7ENiP2xmTwDPG11W9uswJob4xgcQeby13wUFyRrWAhFzHN6nLSmQi1kV58tzUhswYqR5E1txL2HnCg6fP5gn6
 ```
@@ -75,12 +65,7 @@ Prefer to stay anonymous? I accept crypto donations.
 bc1qpamdenvjmzmjumz24s3hymcn77xu8gy9ur04ll
 ```
 
-</details>
+## LICENSE
 
-## Author
-
-Made by [@potatameister](https://github.com/potatameister)
-
----
-
-Star this repo if you find it useful!
+Copyright 2024 potatameister.
+Distributed under the MIT License.
